@@ -44,7 +44,7 @@ class VEnhancer:
 
     def enhance_a_video(self, video_path, prompt, up_scale=4, target_fps=24, noise_aug=300):
 
-        save_name = os.path.splitext(os.path.basename(video_path))[0]
+        save_name = os.path.splitext(os.path.basename(video_path))[0] + '_upscale'
         text = prompt
         logger.info(f"text: {text}")
         caption = text + self.model.positive_prompt
