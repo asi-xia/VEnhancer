@@ -47,7 +47,7 @@ class VideoToVideo:
         self.diffusion = diffusion
         logger.info("Build diffusion with GaussianDiffusion")
 
-        vae = AutoencoderKLTemporalDecoder.from_pretrained(opt.model_path +'/vae/diffusion_pytorch_model.fp16.safetensors')
+        vae = AutoencoderKLTemporalDecoder.from_pretrained(opt.model_path +'/vae', variant="fp16")
         vae.eval()
         vae.requires_grad_(False)
         vae.to(self.device)
