@@ -21,7 +21,8 @@ class VideoToVideoParallel:
     def __init__(self, opt):
         self.opt = opt
         self.device = torch.device(f"cuda")
-        clip_encoder = FrozenOpenCLIPEmbedder(device=self.device, pretrained="laion2b_s32b_b79k")
+        cfg.model_path = opt.model_path + "/venhancer_v2.pt"
+        clip_encoder = FrozenOpenCLIPEmbedder(device=self.device, pretrained=opt.model_path + "/clip_vision/open_clip_pytorch_model.bin")
         clip_encoder.model.to(self.device)
         self.clip_encoder = clip_encoder
         logger.info(f"Build encoder with {cfg.embedder.type}")
@@ -30,7 +31,6 @@ class VideoToVideoParallel:
         generator = generator.to(self.device)
         generator.eval()
 
-        cfg.model_path = opt.model_path
         load_dict = torch.load(cfg.model_path, map_location="cpu")
         if "state_dict" in load_dict:
             load_dict = load_dict["state_dict"]
@@ -46,9 +46,7 @@ class VideoToVideoParallel:
         self.diffusion = diffusion
         logger.info("Build diffusion with GaussianDiffusion")
 
-        vae = AutoencoderKLTemporalDecoder.from_pretrained(
-            "stabilityai/stable-video-diffusion-img2vid", subfolder="vae", variant="fp16"
-        )
+        vae = AutoencoderKLTemporalDecoder.from_pretrained(opt.model_path +'/vae/diffusion_pytorch_model.fp16.safetensors')
         vae.eval()
         vae.requires_grad_(False)
         vae.to(self.device)
